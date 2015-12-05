@@ -2,19 +2,85 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>hello world</title>
-    <script type="text/javascript">
-    	function helloworld(){
-			alert("hello world!")
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+
+	<style type="text/css">
+		p {
+			background-color: #444;
+			color: lightgrey;
 		}
-   		document.addEventListener('plusready', function(){
-   			alert("welcome to Html5plus!");
-   		});
-   		
-    </script>
+	</style>
 </head>
 <body>
-	This is a show “helloworld” default page,your can click this button <button onclick="helloworld()">click me!</button> to show a "hello world" message!
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">Access Sdcard</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-content-padded">
+			<h5>PRIVATE_WWW：</h5>
+			<p id="private-www"></p>
+			<h5>PUBLIC_DOCUMENTS：</h5>
+			<p id="public-documents"></p>
+			<h5>在PUBLIC_DOCUMENTS创建文件file.txt：</h5>
+			
+			<button id="create" class="mui-btn mui-btn-primary">
+				create
+			</button>
+			
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		mui.init();
+		
+		console.error("aaaaaaaaaaaaaa");
+		mui.plusReady(function() {
+			mui.back = function() {
+				plus.runtime.quit();
+			};
+
+			plus.io.requestFileSystem(plus.io.PRIVATE_WWW, function(fs) {
+				document.getElementById("private-www").innerText = fs.root.fullPath;
+			}, function(e) {
+				alert("Request file system failed: " + e.message);
+			});
+			
+			plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {
+				document.getElementById("public-documents").innerText = fs.root.fullPath;
+			}, function(e) {
+				alert("Request file system failed: " + e.message);
+			});
+		});
+		
+		mui(".mui-content").on('tap', 'button', function() {
+			if(this.id === "create") {
+				plus.io.resolveLocalFileSystemURL( "_documents/", function( entry ) {
+					console.error("_documents");
+					entry.getFile('file.txt', {create: true}, function(entry) {
+						//alert(entry.name + "\n" + entry.fullPath + "\n" + entry.isFile);
+						entry.createWriter(function(writer) {
+							writer.onwrite = function(event) {
+								console.error("xxxxxxxxxxxxx");
+								alert("onwrite: " + event.target.readyState);
+							};
+							writer.write("line1: " + new Date().toLocaleString());
+							//连续调用write方法，除第一次外，其他的调用好像没有生效
+							writer.write("line2: " + new Date().toLocaleString());
+						}, function(error) {
+							alert(error.msg);
+						});
+					}, function(error) {
+						alert(error.msg);
+					});
+				}, function(error) {
+					alert(error.msg);
+				});
+			}
+		});
+	</script>
 </body>
 </html>
