@@ -26,18 +26,25 @@
 			<h5>PUBLIC_DOCUMENTS：</h5>
 			<p id="public-documents"></p>
 			<h5>在PUBLIC_DOCUMENTS创建文件file.txt：</h5>
-			
 			<button id="create" class="mui-btn mui-btn-primary">
 				create
 			</button>
+
+			<h5>打开_www/res/s.pdf：</h5>
+			<button id="open-pdf" class="mui-btn mui-btn-primary">
+				open pdf
+			</button>
 			
+			<h5>打开/storage/emulated/0/test.txt：</h5>
+			<button id="open-txt" class="mui-btn mui-btn-primary">
+				open txt
+			</button>
 		</div>
 	</div>
 	
 	<script type="text/javascript">
 		mui.init();
 		
-		console.error("aaaaaaaaaaaaaa");
 		mui.plusReady(function() {
 			mui.back = function() {
 				plus.runtime.quit();
@@ -79,7 +86,20 @@
 				}, function(error) {
 					alert(error.msg);
 				});
+			} else if (this.id === "open-pdf") {
+				var path=plus.io.convertLocalFileSystemURL("_www/res/s.pdf");
+				alert(path);
+				plus.runtime.openFile( path, {}, function ( e ) {
+					plus.nativeUI.alert( "无法打开pdf文件："+e.emssage );
+				});
+			} else if (this.id === "open-txt") {
+				var path = "/storage/emulated/0/test.1txt";
+				alert(path);
+				plus.runtime.openFile( path, {}, function ( e ) {
+					plus.nativeUI.alert( "无法打开txt文件：" + e.message);
+				});
 			}
+			
 		});
 	</script>
 </body>
